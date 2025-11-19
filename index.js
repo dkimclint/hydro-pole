@@ -1288,7 +1288,7 @@ function handleFloodDataUpdate(payload) {
         case 'UPDATE':
             if (newRecord && newRecord.device_id) {
                 console.log('🔄 SMART: Processing new data from', newRecord.device_id);
-                
+                 
                 // Show immediate notification but throttle full reload
                 showWaterLevelAlert(`New data: ${newRecord.device_id} - ${newRecord.water_level}ft`, 'info');
                 

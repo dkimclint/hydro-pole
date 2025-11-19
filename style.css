@@ -1049,25 +1049,25 @@ button, input {
 
 .water-level-badge.safe {
     background: var(--safe-green);
-    color: white;
+    color: rgba(255, 255, 255, 0.437);
     border: 1px solid var(--safe-green);
 }
 
 .water-level-badge.warning {
     background: var(--alert-yellow);
-    color: white;
+    color: rgba(255, 255, 255, 0.437);
     border: 1px solid var(--alert-yello);
 }
 
 .water-level-badge.danger {
     background: var(--warning-red);
-    color: white;
+    color: rgba(255, 255, 255, 0.437);
     border: 1px solid var(--warning-red);
 }
 
 .water-level-badge.offline {
     background: var(--text-400);
-    color: white;
+    color: rgba(255, 255, 255, 0.495);
     border: 1px solid var(--text-400);
 }
 
