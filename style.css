@@ -736,6 +736,46 @@ button, input {
   justify-content: center;
 }
 
+/* FIXED: Better color contrast for danger alerts */
+.alert-toast.danger {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  color: white;
+  border: 1px solid #fecaca;
+}
+
+.alert-item.danger {
+  border-left-color: #dc2626;
+  background: rgba(220, 38, 38, 0.05);
+  color: #1f2937;
+}
+
+.alert-item.danger i {
+  color: #dc2626;
+}
+
+.alert-item.danger span {
+  color: #1f2937;
+  font-weight: 600;
+}
+
+/* FIXED: Better contrast for water level badges */
+.water-level-badge.danger {
+  background: #dc2626;
+  color: white;
+  border: 1px solid #dc2626;
+  font-weight: 700;
+}
+
+/* FIXED: Dark mode adjustments for danger alerts */
+body.dark-mode .alert-item.danger {
+  background: rgba(220, 38, 38, 0.15);
+  color: #f8fafc;
+}
+
+body.dark-mode .alert-item.danger span {
+  color: #f8fafc;
+}
+
 /* ===== User Location Marker Styles ===== */
 .user-location-marker {
   position: relative;
