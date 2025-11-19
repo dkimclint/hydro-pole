@@ -298,8 +298,7 @@ function handleResize() {
     }
 }
 
-// === FIXED: Show Notifications Panel ===
-// === FIXED: Show Notifications Panel with Clear All Button ===
+// === FIXED: Show Notifications Panel with Correct Structure ===
 function showNotificationsPanel() {
     console.log('Opening notifications panel...');
     const overlay = document.querySelector('.mobile-menu-overlay');
