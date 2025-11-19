@@ -620,7 +620,7 @@ button, input {
   gap: 1rem;
 }
 
-/* ===== Alerts ===== */
+/* ===== Enhanced Alert Toast with Smooth Transitions === */
 .alert-toast {
   padding: 1rem 1.25rem;
   border-radius: var(--border-radius-lg);
@@ -637,6 +637,15 @@ button, input {
   justify-content: space-between;
   animation: slideInMobile 0.3s ease-out;
   backdrop-filter: blur(20px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.alert-toast.closing {
+  animation: slideOutMobile 0.3s ease-in forwards;
+  opacity: 0;
+  transform: translateY(-20px);
 }
 
 @keyframes slideInMobile {
@@ -650,6 +659,54 @@ button, input {
   }
 }
 
+@keyframes slideOutMobile {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+}
+
+/* Desktop animation */
+@media (min-width: 769px) {
+  .alert-toast {
+    animation: slideInDesktop 0.3s ease-out;
+    top: 100px;
+    right: 20px;
+    left: auto;
+    min-width: 300px;
+  }
+  
+  .alert-toast.closing {
+    animation: slideOutDesktop 0.3s ease-in forwards;
+  }
+  
+  @keyframes slideInDesktop {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideOutDesktop {
+    from {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+  }
+}
+
 .alert-toast.success {
   background: linear-gradient(135deg, var(--safe-green), #22c55e);
 }
@@ -660,6 +717,10 @@ button, input {
 
 .alert-toast.error {
   background: linear-gradient(135deg, var(--warning-red), #ef4444);
+}
+
+.alert-toast.info {
+  background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
 }
 
 .alert-toast button {
@@ -851,6 +912,7 @@ button, input {
     font-size: 0.9rem;
     margin-bottom: 4px;
     word-break: break-all;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 
 .enhanced-info-value.coordinates {
@@ -1016,18 +1078,21 @@ button, input {
     color: var(--text-900);
     margin-bottom: 0.25rem;
     font-size: 0.95rem;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .station-location {
     font-size: 0.8rem;
-    color: var(--text-500);
+    color: var(--text-700);
     margin-bottom: 0.25rem;
+    font-weight: 500;
 }
 
 .station-coordinates {
     font-size: 0.75rem;
-    color: var(--text-400);
+    color: var(--text-600);
     font-family: 'Monaco', 'Menlo', monospace;
+    font-weight: 500;
 }
 
 .station-data {
@@ -1049,25 +1114,25 @@ button, input {
 
 .water-level-badge.safe {
     background: var(--safe-green);
-    color: rgba(255, 255, 255, 0.437);
+    color: white;
     border: 1px solid var(--safe-green);
 }
 
 .water-level-badge.warning {
     background: var(--alert-yellow);
-    color: rgba(255, 255, 255, 0.437);
-    border: 1px solid var(--alert-yello);
+    color: white;
+    border: 1px solid var(--alert-yellow);
 }
 
 .water-level-badge.danger {
     background: var(--warning-red);
-    color: rgba(255, 255, 255, 0.437);
+    color: white;
     border: 1px solid var(--warning-red);
 }
 
 .water-level-badge.offline {
     background: var(--text-400);
-    color: rgba(255, 255, 255, 0.495);
+    color: white;
     border: 1px solid var(--text-400);
 }
 
@@ -1298,6 +1363,19 @@ button, input {
     border-radius: var(--border-radius);
     border-left: 4px solid var(--primary-blue);
     font-size: 0.9rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateX(0);
+    opacity: 1;
+    max-height: 100px;
+}
+
+.alert-item.removing {
+    transform: translateX(-100%);
+    opacity: 0;
+    max-height: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
 }
 
 .alert-item i {
@@ -1333,6 +1411,17 @@ button, input {
 
 .alert-item.success i {
     color: var(--safe-green);
+}
+
+.loading-stations {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-500);
+    font-style: italic;
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* Enhanced popup water level range */
@@ -1441,6 +1530,7 @@ body.dark-mode {
   --text-700: #e2e8f0;
   --text-500: #94a3b8;
   --text-400: #64748b;
+  --text-600: #cbd5e1;
   --bg-white: #0f172a;
   --bg-light: #1e293b;
   --bg-card: rgba(30, 41, 59, 0.95);
@@ -1525,6 +1615,57 @@ body.dark-mode .station-item:hover {
 body.dark-mode .water-level-badge {
     background: rgba(37, 99, 235, 0.2);
     border-color: rgba(37, 99, 235, 0.3);
+}
+
+/* FIXED: Better text contrast for dark mode */
+body.dark-mode .station-name {
+  color: #f8fafc;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .station-location {
+  color: #e2e8f0;
+}
+
+body.dark-mode .station-coordinates {
+  color: #cbd5e1;
+}
+
+body.dark-mode .enhanced-info-value {
+  color: #f1f5f9;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* FIXED: Prevent duplicate alerts */
+.alert-item.duplicate {
+  display: none !important;
+}
+
+/* FIXED: Alert list duplicate prevention */
+.alert-list .alert-item:not(:first-child) {
+  border-top: 1px solid var(--border-light);
+  padding-top: 0.75rem;
+}
+
+/* Remove duplicate styling */
+.alert-list .alert-item ~ .alert-item {
+  margin-top: 0;
+}
+
+/* Notification items smooth transitions */
+.notification-item {
+  transition: all 0.3s ease;
+  transform: scale(1);
+  opacity: 1;
+}
+
+.notification-item.removing {
+  transform: scale(0.8);
+  opacity: 0;
+  max-height: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
 }
 
 /* ===== Desktop Map Controls ===== */
@@ -1620,25 +1761,6 @@ body.dark-mode .water-level-badge {
   
   .mobile-menu-overlay {
     display: none;
-  }
-  
-  .alert-toast {
-    top: 100px;
-    right: 20px;
-    left: auto;
-    min-width: 300px;
-    animation: slideInDesktop 0.3s ease-out;
-  }
-  
-  @keyframes slideInDesktop {
-    from {
-      transform: translateX(100%);
-      opacity: 0;
-    }
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
   }
   
   .panel-header {
@@ -1934,4 +2056,3 @@ body.dark-mode .water-level-badge {
         gap: 0.4rem;
     }
 }
-

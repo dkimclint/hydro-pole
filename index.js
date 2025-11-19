@@ -391,30 +391,82 @@ function loadMobileNotifications() {
         });
     }
     
-    notificationsList.innerHTML = notifications.map(notification => `
-        <div class="notification-item ${notification.type}">
-            <div class="notification-icon">
-                <i class="fas ${notification.icon}"></i>
+    // Add smooth transition for the entire list
+    notificationsList.style.opacity = '0';
+    notificationsList.style.transition = 'opacity 0.3s ease';
+    
+    setTimeout(() => {
+        notificationsList.innerHTML = notifications.map(notification => `
+            <div class="notification-item ${notification.type}">
+                <div class="notification-icon">
+                    <i class="fas ${notification.icon}"></i>
+                </div>
+                <div class="notification-content">
+                    <div class="notification-title">${notification.title}</div>
+                    <div class="notification-message">${notification.message}</div>
+                    <div class="notification-time">${notification.time}</div>
+                </div>
             </div>
-            <div class="notification-content">
-                <div class="notification-title">${notification.title}</div>
-                <div class="notification-message">${notification.message}</div>
-                <div class="notification-time">${notification.time}</div>
-            </div>
-        </div>
-    `).join('');
+        `).join('');
+        
+        notificationsList.style.opacity = '1';
+    }, 300);
 }
 
-// === Clear Notifications ===
+// === FIXED: Enhanced Clear Notifications with Smooth Animation ===
 function clearNotifications() {
     const alertList = document.getElementById('alertList');
+    const notificationItems = document.querySelectorAll('.notification-item');
+    
+    // Smoothly remove all notification items
+    notificationItems.forEach((item, index) => {
+        setTimeout(() => {
+            item.classList.add('removing');
+            setTimeout(() => {
+                if (item.parentElement) {
+                    item.remove();
+                }
+            }, 300);
+        }, index * 100);
+    });
+    
+    // Update alert list with smooth transition
     if (alertList) {
-        alertList.innerHTML = '<div class="alert-item"><i class="fas fa-info-circle"></i><span>No recent alerts</span></div>';
+        const existingAlerts = alertList.querySelectorAll('.alert-item');
+        existingAlerts.forEach((alert, index) => {
+            setTimeout(() => {
+                alert.classList.add('removing');
+                setTimeout(() => {
+                    if (alert.parentElement) {
+                        alert.remove();
+                    }
+                }, 300);
+            }, index * 100);
+        });
+        
+        // Add "no alerts" message after clearing
+        setTimeout(() => {
+            const noAlertsItem = document.createElement('div');
+            noAlertsItem.className = 'alert-item';
+            noAlertsItem.innerHTML = `
+                <i class="fas fa-info-circle"></i>
+                <span>No recent alerts</span>
+            `;
+            noAlertsItem.style.opacity = '0';
+            alertList.appendChild(noAlertsItem);
+            
+            setTimeout(() => {
+                noAlertsItem.style.transition = 'opacity 0.3s ease';
+                noAlertsItem.style.opacity = '1';
+            }, 10);
+        }, existingAlerts.length * 100 + 300);
     }
     
-    loadMobileNotifications();
-    
-    showWaterLevelAlert('Notifications cleared', 'success');
+    // Reload mobile notifications with smooth transition
+    setTimeout(() => {
+        loadMobileNotifications();
+        showWaterLevelAlert('Notifications cleared', 'success');
+    }, notificationItems.length * 100 + 300);
 }
 
 // === Hide Mobile Menu ===
@@ -774,10 +826,14 @@ function getStationStatus(station) {
     return getWaterLevelStatus(station.water_level);
 }
 
-// === Check for Water Level Changes ===
+// === FIXED: Enhanced Check for Water Level Changes - PREVENT DUPLICATES ===
 function checkForWaterLevelChanges(previousLevels) {
+    const processedStations = new Set();
+    
     stations.forEach(station => {
-        if (station.device_id && station.water_level !== null) {
+        if (station.device_id && station.water_level !== null && !processedStations.has(station.device_id)) {
+            processedStations.add(station.device_id);
+            
             const previousLevel = previousLevels.get(station.device_id);
             const currentLevel = station.water_level;
             const currentStatus = getWaterLevelStatus(currentLevel);
@@ -793,13 +849,13 @@ function checkForWaterLevelChanges(previousLevels) {
                 
                 if (currentStatus === 'danger') {
                     alertType = 'danger';
-                    alertMessage = `🚨 DANGER: Water level at ${station.name || station.device_id} is ${currentLevel.toFixed(2)} ft (HIGH RISK)`;
+                    alertMessage = `DANGER: Water level at ${station.name || station.device_id} is ${currentLevel.toFixed(2)} ft (HIGH RISK)`;
                 } else if (currentStatus === 'warning') {
                     alertType = 'warning';
-                    alertMessage = `⚠️ ALERT: Water level at ${station.name || station.device_id} is ${currentLevel.toFixed(2)} ft (ELEVATED)`;
+                    alertMessage = `ALERT: Water level at ${station.name || station.device_id} is ${currentLevel.toFixed(2)} ft (ELEVATED)`;
                 } else if (currentStatus === 'safe') {
-                    alertType = 'success';
-                    alertMessage = `✅ Water level at ${station.name || station.device_id} is ${currentLevel.toFixed(2)} ft (NORMAL)`;
+                    alertType = 'safe';
+                    alertMessage = `Water level at ${station.name || station.device_id} is ${currentLevel.toFixed(2)} ft (NORMAL)`;
                 }
                 
                 if (alertMessage) {
@@ -842,8 +898,8 @@ function renderStationsList() {
             : 'No data';
         
         // Add GPS source indicator
-        const gpsIndicator = station.gps_source === 'live_gps' ? ' 🎯' : 
-                            station.gps_source === 'default_fallback' ? ' ⚠️' : '';
+        const gpsIndicator = station.gps_source === 'live_gps' ? ' ' : 
+                            station.gps_source === 'default_fallback' ? ' ' : '';
         
         return `
         <div class="station-item ${selectedStation?.id === station.id ? 'active' : ''}" 
@@ -1881,10 +1937,19 @@ function searchLocation(query) {
         });
 }
 
-// === Add Water Level Alert to Dashboard ===
+// === FIXED: Enhanced Add Water Level Alert - PREVENT DUPLICATES ===
 function addWaterLevelAlert(message, type = 'info') {
     const alertList = document.getElementById('alertList');
     if (!alertList) return;
+    
+    // FIXED: Check for duplicates before adding
+    const existingAlerts = Array.from(alertList.querySelectorAll('.alert-item span'));
+    const isDuplicate = existingAlerts.some(span => span.textContent === message);
+    
+    if (isDuplicate) {
+        console.log('Skipping duplicate alert:', message);
+        return;
+    }
     
     const alertItem = document.createElement('div');
     alertItem.className = `alert-item ${type}`;
@@ -1898,37 +1963,76 @@ function addWaterLevelAlert(message, type = 'info') {
         <span>${message}</span>
     `;
     
+    // Add with animation
+    alertItem.style.opacity = '0';
+    alertItem.style.transform = 'translateY(-10px)';
     alertList.insertBefore(alertItem, alertList.firstChild);
     
-    while (alertList.children.length > 8) {
-        alertList.removeChild(alertList.lastChild);
+    // Trigger animation
+    setTimeout(() => {
+        alertItem.style.transition = 'all 0.3s ease';
+        alertItem.style.opacity = '1';
+        alertItem.style.transform = 'translateY(0)';
+    }, 10);
+    
+    // Remove old alerts with smooth animation (keep only 5 latest)
+    const allAlerts = alertList.querySelectorAll('.alert-item');
+    if (allAlerts.length > 5) {
+        const alertsToRemove = Array.from(allAlerts).slice(5);
+        alertsToRemove.forEach((alert, index) => {
+            setTimeout(() => {
+                alert.classList.add('removing');
+                setTimeout(() => {
+                    if (alert.parentElement) {
+                        alert.remove();
+                    }
+                }, 300);
+            }, index * 100);
+        });
     }
 }
 
-// === Show Water Level Alert Function ===
+// === Enhanced Show Water Level Alert with Smooth Close ===
 function showWaterLevelAlert(message, type = 'info') {
-    const existingAlerts = document.querySelectorAll('.alert-toast');
-    existingAlerts.forEach(alert => alert.remove());
+    const existingAlerts = document.querySelectorAll('.alert-toast:not(.closing)');
+    existingAlerts.forEach(alert => {
+        closeAlertSmoothly(alert);
+    });
     
     const alert = document.createElement('div');
     alert.className = `alert-toast ${type}`;
     alert.innerHTML = `
         <span>${message}</span>
-        <button onclick="this.parentElement.remove()">×</button>
+        <button onclick="closeAlertSmoothly(this.parentElement)">×</button>
     `;
     
     document.body.appendChild(alert);
+    
+    // Auto-remove after delay with smooth animation
+    setTimeout(() => {
+        if (alert.parentElement && !alert.classList.contains('closing')) {
+            closeAlertSmoothly(alert);
+        }
+    }, 5000);
     
     // Only add to dashboard if it's a water level related alert
     if (message.includes('Water level') || message.includes('DANGER') || message.includes('ALERT')) {
         addWaterLevelAlert(message, type);
     }
+}
+
+// === Smooth Close Function for Alerts ===
+function closeAlertSmoothly(alertElement) {
+    if (!alertElement || alertElement.classList.contains('closing')) return;
     
+    alertElement.classList.add('closing');
+    
+    // Remove from DOM after animation completes
     setTimeout(() => {
-        if (alert.parentElement) {
-            alert.remove();
+        if (alertElement.parentElement) {
+            alertElement.remove();
         }
-    }, 5000);
+    }, 300); // Match this with CSS transition duration
 }
 
 // === Toggle Dark Mode ===
@@ -1969,18 +2073,20 @@ function updateDisplay(newData) {
     // Show immediate notification
     if (newData.device_id && newData.water_level !== undefined) {
         const status = getWaterLevelStatus(newData.water_level);
-        let alertMessage = `New data from ${newData.device_id}: ${newData.water_level} ft`;
         let alertType = 'info';
+        let alertMessage = '';
         
         if (status === 'danger') {
-            alertMessage = `🚨 NEW DANGER: ${newData.device_id} water level ${newData.water_level} ft`;
+            alertMessage = `NEW DANGER: ${newData.device_id} water level ${newData.water_level} ft`;
             alertType = 'danger';
         } else if (status === 'warning') {
-            alertMessage = `⚠️ NEW ALERT: ${newData.device_id} water level ${newData.water_level} ft`;
+            alertMessage = `NEW ALERT: ${newData.device_id} water level ${newData.water_level} ft`;
             alertType = 'warning';
         }
         
-        showWaterLevelAlert(alertMessage, alertType);
+        if (alertMessage) {
+            showWaterLevelAlert(alertMessage, alertType);
+        }
     }
     
     // SMART reload with throttling
@@ -2041,3 +2147,4 @@ window.showWaterLevelAlert = showWaterLevelAlert;
 window.hideMobileMenu = hideMobileMenu;
 window.loadStations = loadStations;
 window.clearNotifications = clearNotifications;
+window.closeAlertSmoothly = closeAlertSmoothly;
