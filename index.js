@@ -299,6 +299,7 @@ function handleResize() {
 }
 
 // === FIXED: Show Notifications Panel ===
+// === FIXED: Show Notifications Panel with Clear All Button ===
 function showNotificationsPanel() {
     console.log('Opening notifications panel...');
     const overlay = document.querySelector('.mobile-menu-overlay');
@@ -307,36 +308,50 @@ function showNotificationsPanel() {
     if (!overlay || !overlayContent) return;
     
     overlayContent.innerHTML = `
-        <div class="notifications-header">
-            <h4><i class="fas fa-bell"></i> Recent Alerts & Updates</h4>
-            <p class="notifications-subtitle">Past water level changes and system alerts</p>
+        <div class="overlay-header">
+            <h3><i class="fas fa-bell"></i> Notifications</h3>
+            <button id="closeMenu" class="close-btn">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
-        <div class="notifications-list" id="mobileNotificationsList">
-            <div class="notification-item">
-                <div class="notification-icon">
-                    <i class="fas fa-info-circle"></i>
-                </div>
-                <div class="notification-content">
-                    <div class="notification-title">System Ready</div>
-                    <div class="notification-message">Flood monitoring system is active and receiving data</div>
-                    <div class="notification-time">Just now</div>
+        <div class="notifications-container">
+            <div class="notifications-header">
+                <h4>Recent Alerts & Updates</h4>
+                <p class="notifications-subtitle">Past water level changes and system alerts</p>
+            </div>
+            <div class="notifications-list" id="mobileNotificationsList">
+                <div class="notification-item">
+                    <div class="notification-icon">
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    <div class="notification-content">
+                        <div class="notification-title">System Ready</div>
+                        <div class="notification-message">Flood monitoring system is active and receiving data</div>
+                        <div class="notification-time">Just now</div>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="notifications-actions">
-            <button class="clear-notifications-btn">
-                <i class="fas fa-trash"></i> Clear All
-            </button>
+            <div class="notifications-actions">
+                <button class="clear-notifications-btn">
+                    <i class="fas fa-trash"></i> Clear All Notifications
+                </button>
+            </div>
         </div>
     `;
     
-    loadMobileNotifications();
+    // Re-attach close button event listener
+    const closeBtn = overlayContent.querySelector('#closeMenu');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', hideMobileMenu);
+    }
     
+    // Attach clear button event listener
     const clearBtn = overlayContent.querySelector('.clear-notifications-btn');
     if (clearBtn) {
         clearBtn.addEventListener('click', clearNotifications);
     }
     
+    loadMobileNotifications();
     overlay.classList.add('active');
     document.body.style.overflow = 'hidden';
     
@@ -344,6 +359,7 @@ function showNotificationsPanel() {
 }
 
 // === Load Mobile Notifications ===
+// === FIXED: Load Mobile Notifications ===
 function loadMobileNotifications() {
     const notificationsList = document.getElementById('mobileNotificationsList');
     if (!notificationsList) return;
@@ -351,6 +367,7 @@ function loadMobileNotifications() {
     const alertItems = document.querySelectorAll('#alertList .alert-item');
     const notifications = [];
     
+    // Add system status notification
     notifications.push({
         type: 'info',
         title: 'System Status',
@@ -359,8 +376,9 @@ function loadMobileNotifications() {
         icon: 'fa-info-circle'
     });
     
+    // Add alerts from dashboard
     alertItems.forEach((alert, index) => {
-        if (index < 8) {
+        if (index < 8) { // Limit to 8 notifications
             const icon = alert.querySelector('i').className;
             const message = alert.querySelector('span').textContent;
             const type = alert.classList.contains('warning') ? 'warning' : 
@@ -381,6 +399,7 @@ function loadMobileNotifications() {
         }
     });
     
+    // If no alerts, show placeholder
     if (notifications.length <= 1) {
         notifications.push({
             type: 'info',
@@ -391,7 +410,7 @@ function loadMobileNotifications() {
         });
     }
     
-    // Add smooth transition for the entire list
+    // Add smooth transition
     notificationsList.style.opacity = '0';
     notificationsList.style.transition = 'opacity 0.3s ease';
     
