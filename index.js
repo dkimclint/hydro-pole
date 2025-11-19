@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
     startRealTimeUpdates();
     requestUserLocation();
     initDashboard();
-     loadInitialData();
+    loadInitialData();
     
     console.log('HydroPole App initialized successfully!');
 });
@@ -993,7 +993,7 @@ function createStationPopupContent(station) {
 function createEnhancedStationPopupContent(station, locationName, waterLevel, status) {
     const lastUpdate = station.last_communication ? new Date(station.last_communication) : null;
     const timeAgo = lastUpdate ? getTimeAgo(lastUpdate) : 'Never';
-    
+
     // Determine status description based on water level
     let statusDescription = 'No Data';
     if (waterLevel !== null) {
@@ -1005,7 +1005,7 @@ function createEnhancedStationPopupContent(station, locationName, waterLevel, st
             statusDescription = 'NORMAL - Safe Conditions';
         }
     }
-    
+
     return `
         <div class="enhanced-popup-container">
             <div class="enhanced-popup-header">
@@ -1019,6 +1019,18 @@ function createEnhancedStationPopupContent(station, locationName, waterLevel, st
             </div>
             
             <div class="enhanced-popup-divider"></div>
+            
+            <!-- DITO MO ILALAGAY YUNG MEDIAN INFO BOSS -->
+            <div class="data-quality-info">
+                <i class="fas fa-chart-line"></i>
+                <span>Data Quality: 10-reading Median Filter</span>
+                <div class="quality-tooltip">
+                    <i class="fas fa-info-circle"></i>
+                    <div class="tooltip-text">
+                        Uses median of 10 ultrasonic readings to eliminate spikes
+                    </div>
+                </div>
+            </div>
             
             <div class="enhanced-popup-content">
                 <div class="enhanced-info-grid">
@@ -1191,59 +1203,6 @@ function updateStationsCount() {
     }
 }
 
-// === Initialize Real-time Subscriptions ===
-function initRealTimeSubscriptions() {
-    // Subscribe to changes in flood_data table for real-time updates
-    const floodSubscription = supabase
-        .channel('flood_data_changes')
-        .on('postgres_changes', 
-            { 
-                event: '*', 
-                schema: 'public', 
-                table: 'flood_data' 
-            }, 
-            (payload) => {
-                console.log('Real-time flood_data update:', payload);
-                handleFloodDataUpdate(payload);
-            }
-        )
-        .subscribe();
-    
-    // Subscribe to changes in hydropole_devices table
-    const devicesSubscription = supabase
-        .channel('devices_changes')
-        .on('postgres_changes',
-            {
-                event: '*',
-                schema: 'public',
-                table: 'hydropole_devices'
-            },
-            (payload) => {
-                if (loadStationsTimer) clearTimeout(loadStationsTimer);
-                loadStationsTimer = setTimeout(() => loadStations(), 1000);
-            }
-        )
-        .subscribe();
-    
-    // Subscribe to changes in monitoring_stations table
-    const stationsSubscription = supabase
-        .channel('stations_changes')
-        .on('postgres_changes',
-            {
-                event: '*',
-                schema: 'public',
-                table: 'monitoring_stations'
-            },
-            (payload) => {
-                if (loadStationsTimer) clearTimeout(loadStationsTimer);
-                loadStationsTimer = setTimeout(() => loadStations(), 1000);
-            }
-        )
-        .subscribe();
-    
-    console.log('✅ Real-time subscriptions initialized for flood_data, hydropole_devices, and monitoring_stations');
-}
-
 // === Handle Real-time Flood Data Updates ===
 function handleFloodDataUpdate(payload) {
     const eventType = payload.eventType || payload.event;
@@ -1258,20 +1217,18 @@ function handleFloodDataUpdate(payload) {
         case 'INSERT':
         case 'UPDATE':
             if (newRecord && newRecord.device_id) {
-                // Debounce the stations reload
-                if (loadStationsTimer) clearTimeout(loadStationsTimer);
-                loadStationsTimer = setTimeout(() => loadStations(), 500);
+                // INSTANT reload - no debounce for real-time
+                console.log('🚨 INSTANT REAL-TIME UPDATE TRIGGERED');
+                loadStations();
             }
             break;
             
         case 'DELETE':
-            if (loadStationsTimer) clearTimeout(loadStationsTimer);
-            loadStationsTimer = setTimeout(() => loadStations(), 1000);
+            loadStations();
             break;
             
         default:
-            if (loadStationsTimer) clearTimeout(loadStationsTimer);
-            loadStationsTimer = setTimeout(() => loadStations(), 1000);
+            loadStations();
             break;
     }
 }
@@ -1488,20 +1445,6 @@ async function getLocationName(lat, lng) {
         // For local development, just return coordinates to avoid CORS issues
         console.log('Location name lookup disabled for local development');
         return `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
-        
-        /* Uncomment this for production with a proper CORS solution:
-        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`);
-        const data = await response.json();
-        
-        if (data && data.display_name) {
-            const parts = data.display_name.split(',');
-            if (parts.length >= 2) {
-                return parts[0] + ', ' + parts[1];
-            }
-            return data.display_name;
-        }
-        return 'Unknown Location';
-        */
     } catch (error) {
         console.warn('Error getting location name:', error);
         return `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
@@ -1850,9 +1793,10 @@ function loadDarkModePreference() {
 function startRealTimeUpdates() {
     console.log('Setting up real-time database updates...');
     
-    initRealTimeSubscriptions();
-    setupRealtimeUpdates(); // Add this line
+    // USE ONLY ONE subscription function
+    setupRealtimeUpdates();
     
+    // Regular interval fallback
     setInterval(() => {
         loadStations();
     }, 60000);
@@ -1865,7 +1809,6 @@ window.addEventListener('beforeunload', function() {
     }
 });
 
-// === Setup Real-time Flood Updates ===
 // === Setup Real-time Flood Updates ===
 function setupRealtimeUpdates() {
   console.log('🔄 Setting up real-time flood data monitoring...');
@@ -1929,9 +1872,8 @@ function updateDisplay(newData) {
         showWaterLevelAlert(alertMessage, alertType);
     }
     
-    // Trigger stations reload to update everything
-    if (loadStationsTimer) clearTimeout(loadStationsTimer);
-    loadStationsTimer = setTimeout(() => loadStations(), 1000);
+    // INSTANT reload for new data
+    loadStations();
 }
 
 // === Load Initial Data ===
@@ -1961,7 +1903,7 @@ async function loadInitialData() {
 window.selectStationFromPopup = function(stationId) {
     console.log('Selecting station from popup, ID:', stationId);
     let station = stations.find(s => s.id === stationId);
-    if (!station) {
+    if (!station) { 
         station = stations.find(s => s.device_id === stationId);
     }
     if (!station) {
