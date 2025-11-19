@@ -22,7 +22,7 @@ let previousWaterLevels = new Map();
 
 // === SMART THROTTLING VARIABLES ===
 let lastStationUpdate = 0;
-const MIN_UPDATE_INTERVAL = 5000; // 5 seconds minimum between updates
+const MIN_UPDATE_INTERVAL = 3000; // 5 seconds minimum between updates
 let isUpdating = false;
 
 // === Initialize everything when DOM is loaded ===
@@ -1401,10 +1401,10 @@ function startRealTimeUpdates() {
         loadStations();
     }, 120000); // 2 minutes
     
-    // Emergency check every 30 seconds for critical levels
+    // Emergency check every 15 seconds for critical levels
     setInterval(() => {
         checkForEmergencyLevels();
-    }, 30000);
+    }, 15000);
 }
 
 // === Emergency Level Check ===
