@@ -22,7 +22,7 @@ let previousWaterLevels = new Map();
 
 // === SMART THROTTLING VARIABLES ===
 let lastStationUpdate = 0;
-const MIN_UPDATE_INTERVAL = 3000; // 5 seconds minimum between updates
+const MIN_UPDATE_INTERVAL = 3000; // 3 seconds minimum between updates
 let isUpdating = false;
 
 // === Initialize everything when DOM is loaded ===
@@ -1439,11 +1439,11 @@ function startRealTimeUpdates() {
     // Smart throttled real-time
     setupRealtimeUpdates();
     
-    // Fallback: Check every 2 minutes (instead of 1)
+    // Fallback: Check every 15 sec
     setInterval(() => {
         console.log('🔄 Scheduled background refresh');
         loadStations();
-    }, 120000); // 2 minutes
+    }, 15000); // 15 sec
     
     // Emergency check every 15 seconds for critical levels
     setInterval(() => {
