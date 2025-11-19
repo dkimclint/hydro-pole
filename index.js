@@ -1866,26 +1866,46 @@ window.addEventListener('beforeunload', function() {
 });
 
 // === Setup Real-time Flood Updates ===
+// === Setup Real-time Flood Updates ===
 function setupRealtimeUpdates() {
   console.log('🔄 Setting up real-time flood data monitoring...');
   
-  const subscription = supabase
-    .channel('flood-updates')
-    .on(
-      'postgres_changes',
-      {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'flood_data',
-      },
-      (payload) => {
-        console.log('🆕 New flood data received!', payload.new);
-        updateDisplay(payload.new);
-      }
-    )
-    .subscribe();
+  try {
+    // Clean up any existing subscriptions first
+    if (window.floodSubscription) {
+      window.floodSubscription.unsubscribe();
+    }
+    
+    // Single subscription for all flood data changes
+    window.floodSubscription = supabase
+      .channel('flood-updates')
+      .on(
+        'postgres_changes',
+        {
+          event: '*', // Listen to ALL changes (INSERT, UPDATE, DELETE)
+          schema: 'public',
+          table: 'flood_data',
+        },
+        (payload) => {
+          console.log('🆕 Real-time flood data update:', payload);
+          handleFloodDataUpdate(payload);
+        }
+      )
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          console.log('✅ Real-time subscription ACTIVE');
+          showWaterLevelAlert('Real-time updates connected', 'success');
+        } else if (status === 'CHANNEL_ERROR') {
+          console.error('❌ Real-time subscription FAILED');
+          showWaterLevelAlert('Real-time updates disconnected', 'warning');
+        }
+      });
 
-  return subscription;
+    return window.floodSubscription;
+  } catch (error) {
+    console.error('Error setting up real-time updates:', error);
+    showWaterLevelAlert('Real-time setup failed: ' + error.message, 'error');
+  }
 }
 
 // === Update Display with New Data ===
