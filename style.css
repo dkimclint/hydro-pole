@@ -8,7 +8,7 @@
   
   --accent-teal: #0d9488;
   --warning-red: #dc2626;
-  --alert-yellow: #ffff00;
+  --alert-yellow: #cbb613;
   --safe-green: #16a34a;
   
   --text-900: #1e293b;
@@ -651,15 +651,15 @@ button, input {
 }
 
 .alert-toast.success {
-  background: linear-gradient(135deg, var(--safe-green), rgb(34, 197, 94));
+  background: linear-gradient(135deg, var(--safe-green), #22c55e);
 }
 
 .alert-toast.warning {
-  background: linear-gradient(135deg, var(--alert-yellow), rgb(255, 255, 0));
+  background: linear-gradient(135deg, var(--alert-yellow), #f9de16);
 }
 
 .alert-toast.error {
-  background: linear-gradient(135deg, var(--warning-red), rgb(239, 68, 68));
+  background: linear-gradient(135deg, var(--warning-red), #ef4444);
 }
 
 .alert-toast button {
@@ -883,9 +883,9 @@ button, input {
 }
 
 .enhanced-level-status.warning {
-    background: rgba(234, 88, 12, 0.1);
+    background: rgba(234, 167, 12, 0.1);
     color: var(--alert-yellow);
-    border: 1px solid rgba(191, 197, 18, 0.3);
+    border: 1px solid rgba(234, 167, 12, 0.3);
 }
 
 .enhanced-level-status.danger {
@@ -1085,7 +1085,7 @@ button, input {
 
 .station-status.warning {
     background: var(--alert-yellow);
-    box-shadow: 0 0 0 2px rgba(201, 195, 13, 0.3);
+    box-shadow: 0 0 0 2px rgba(234, 167, 12, 0.3);
 }
 
 .station-status.danger {
@@ -1127,7 +1127,7 @@ button, input {
 
 .station-marker.enhanced.warning .station-dot {
     background: var(--alert-yellow);
-    box-shadow: 0 0 0 3px rgba(201, 195, 13, 0.3);
+    box-shadow: 0 0 0 3px rgba(234, 167, 12, 0.3);
 }
 
 .station-marker.enhanced.danger .station-pulse {
@@ -1367,7 +1367,7 @@ button, input {
 }
 
 .range-fill.warning {
-    background: linear-gradient(90deg, var(--alert-yellow), #ffff00);
+    background: linear-gradient(90deg, var(--alert-yellow), #f9de16);
 }
 
 .range-fill.danger {
@@ -1418,9 +1418,9 @@ button, input {
 }
 
 .enhanced-level-status.warning {
-    background: rgba(234, 88, 12, 0.1);
+    background: rgba(234, 167, 12, 0.1);
     color: var(--alert-yellow);
-    border-color: rgba(221, 227, 36, 0.3);
+    border-color: rgba(234, 167, 12, 0.3);
 }
 
 .enhanced-level-status.danger {
