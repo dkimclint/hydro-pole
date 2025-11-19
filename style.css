@@ -8,7 +8,7 @@
   
   --accent-teal: #0d9488;
   --warning-red: #dc2626;
-  --alert-orange: #ea580c;
+  --alert-yellow: #ffff00;
   --safe-green: #16a34a;
   
   --text-900: #1e293b;
@@ -651,15 +651,15 @@ button, input {
 }
 
 .alert-toast.success {
-  background: linear-gradient(135deg, var(--safe-green), #22c55e);
+  background: linear-gradient(135deg, var(--safe-green), rgb(34, 197, 94));
 }
 
 .alert-toast.warning {
-  background: linear-gradient(135deg, var(--alert-orange), #f97316);
+  background: linear-gradient(135deg, var(--alert-yellow), rgb(255, 255, 0));
 }
 
 .alert-toast.error {
-  background: linear-gradient(135deg, var(--warning-red), #ef4444);
+  background: linear-gradient(135deg, var(--warning-red), rgb(239, 68, 68));
 }
 
 .alert-toast button {
@@ -884,8 +884,8 @@ button, input {
 
 .enhanced-level-status.warning {
     background: rgba(234, 88, 12, 0.1);
-    color: var(--alert-orange);
-    border: 1px solid rgba(234, 88, 12, 0.3);
+    color: var(--alert-yellow);
+    border: 1px solid rgba(191, 197, 18, 0.3);
 }
 
 .enhanced-level-status.danger {
@@ -1054,9 +1054,9 @@ button, input {
 }
 
 .water-level-badge.warning {
-    background: var(--alert-orange);
+    background: var(--alert-yellow);
     color: white;
-    border: 1px solid var(--alert-orange);
+    border: 1px solid var(--alert-yellow);
 }
 
 .water-level-badge.danger {
@@ -1084,8 +1084,8 @@ button, input {
 }
 
 .station-status.warning {
-    background: var(--alert-orange);
-    box-shadow: 0 0 0 2px rgba(234, 88, 12, 0.2);
+    background: var(--alert-yellow);
+    box-shadow: 0 0 0 2px rgba(201, 195, 13, 0.3);
 }
 
 .station-status.danger {
@@ -1126,8 +1126,8 @@ button, input {
 }
 
 .station-marker.enhanced.warning .station-dot {
-    background: var(--alert-orange);
-    box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.3);
+    background: var(--alert-yellow);
+    box-shadow: 0 0 0 3px rgba(201, 195, 13, 0.3);
 }
 
 .station-marker.enhanced.danger .station-pulse {
@@ -1209,8 +1209,8 @@ button, input {
 }
 
 .station-marker.enhanced.warning .station-marker-label {
-    border-color: var(--alert-orange);
-    color: var(--alert-orange);
+    border-color: var(--alert-yellow);
+    color: var(--alert-yellow);
 }
 
 .station-marker.enhanced.danger .station-marker-label {
@@ -1312,11 +1312,11 @@ button, input {
 }
 
 .alert-item.warning {
-    border-left-color: var(--alert-orange);
+    border-left-color: var(--alert-yellow);
 }
 
 .alert-item.warning i {
-    color: var(--alert-orange);
+    color: var(--alert-yellow);
 }
 
 .alert-item.danger {
@@ -1367,7 +1367,7 @@ button, input {
 }
 
 .range-fill.warning {
-    background: linear-gradient(90deg, var(--alert-orange), #f97316);
+    background: linear-gradient(90deg, var(--alert-yellow), #ffff00);
 }
 
 .range-fill.danger {
@@ -1391,7 +1391,7 @@ button, input {
 }
 
 .range-warning {
-    background: var(--alert-orange);
+    background: var(--alert-yellow);
 }
 
 .range-danger {
@@ -1419,8 +1419,8 @@ button, input {
 
 .enhanced-level-status.warning {
     background: rgba(234, 88, 12, 0.1);
-    color: var(--alert-orange);
-    border-color: rgba(234, 88, 12, 0.3);
+    color: var(--alert-yellow);
+    border-color: rgba(221, 227, 36, 0.3);
 }
 
 .enhanced-level-status.danger {
