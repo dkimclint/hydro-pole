@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="HydroPole - Real-time flood monitoring system">
+    <title>HYDRO-POLE - Flood Monitoring System</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="images/logoHP.png">
+    <link rel="apple-touch-icon" href="images/logoHP.png">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&family=Quicksand:wght@500&family=Poppins:wght@600&family=Exo+2:wght@700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="#" class="brand">
+                <div class="logo-container">
+                    <img src="images/logoHP.png" alt="Hydro-Pole Logo" class="logo-image">
+                    <div class="logo-text">HYDRO-POLE</div>
+                </div>
+            </a>
+            <div class="header-controls">
+                <div class="search-toggle-container">
+                    <button id="searchToggle" class="control-btn" title="Search Location">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <div class="search-container">
+                        <form id="searchForm">
+                            <div class="search-input-group">
+                                <div class="search-input-wrapper">
+                                    <i class="fas fa-search search-icon"></i>
+                                    <input id="searchBox" type="text" placeholder="Search for locations...">
+                                </div>
+                                <button type="submit" class="search-submit">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </form>
+                        <div id="searchResults"></div>
+                    </div>
+                </div>
+                
+                <div class="search-toggle-container">
+                    <button id="searchStationBtn" class="control-btn" title="Search Monitoring Stations">
+                        <i class="fas fa-satellite"></i>
+                    </button>
+                    <div class="station-search-container">
+                        <form id="stationSearchForm">
+                            <div class="search-input-group">
+                                <div class="search-input-wrapper">
+                                    <i class="fas fa-satellite search-icon"></i>
+                                    <input id="stationSearchBox" type="text" placeholder="Search stations...">
+                                </div>
+                                <button type="submit" class="search-submit">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </form>
+                        <div id="stationSearchResults"></div>
+                    </div>
+                </div>
+                
+                <button id="darkModeToggle" class="control-btn" title="Dark Mode">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Desktop Map Controls -->
+    <div class="map-controls desktop-only">
+        <button id="zoomInBtn" class="map-control-btn" title="Zoom In">
+            <i class="fas fa-plus"></i>
+        </button>
+        <button id="zoomOutBtn" class="map-control-btn" title="Zoom Out">
+            <i class="fas fa-minus"></i>
+        </button>
+        <button id="desktopMyLocationBtn" class="map-control-btn" title="My Location">
+            <i class="fas fa-location-arrow"></i>
+        </button>
+    </div>
+    
+    <main class="layout">
+        <div id="map" class="map-background"></div>
+        
+        <!-- Desktop Dashboard Panels -->
+        <div class="dashboard desktop-dashboard">
+            <!-- Stations Panel -->
+            <div class="dashboard-panel stations-panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <i class="fas fa-satellite"></i>
+                        <span>Monitoring Stations</span>
+                    </div>
+                    <button class="panel-toggle">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+                <div class="panel-body">
+                    <div class="stations-header">
+                        <div class="stations-count" id="stationsCount">Loading stations...</div>
+                        <button id="refreshStations" class="refresh-btn" title="Refresh Stations">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                    <div class="stations-list" id="stationsList">
+                        <div class="loading-stations">Loading monitoring stations...</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Alerts Panel -->
+            <div class="dashboard-panel alerts-panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <i class="fas fa-bell"></i>
+                        <span>Recent Alerts</span>
+                    </div>
+                    <button class="panel-toggle">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+                <div class="panel-body">
+                    <div class="alert-list" id="alertList">
+                        <div class="alert-item">
+                            <i class="fas fa-info-circle"></i>
+                            <span>System initialized. Monitoring water levels...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- FIXED: Mobile Map Controls with better spacing and notification button -->
+        <div class="mobile-map-controls mobile-only">
+            <button id="mobileMyLocationBtn" class="mobile-control-btn" title="My Location">
+                <i class="fas fa-location-arrow"></i>
+            </button>
+            <button id="mobileNotificationsBtn" class="mobile-control-btn" title="Notifications">
+                <i class="fas fa-bell"></i>
+            </button>
+        </div>
+    </main>
+    
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay mobile-only">
+        <div class="overlay-header">
+            <h3>Notifications</h3>
+            <button id="closeMenu" class="close-btn">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="overlay-content">
+            <!-- Notifications content will be inserted here -->
+        </div>
+    </div>
+    
+    <!-- Footer for both desktop and mobile - FIXED VISIBILITY -->
+    <footer class="site-footer">
+        <div class="footer-content">
+            <i class="fas fa-satellite-dish"></i>
+            <span>HydroPole - Real-time IoT Flood Monitoring</span>
+        </div>
+    </footer>
+    
+    <script type="module" src="index.js"></script>
+</body>
+</html>
