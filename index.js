@@ -306,6 +306,7 @@ function showNotificationsPanel() {
     
     if (!overlay || !overlayContent) return;
     
+    // TANGGALIN ANG DUPLICATE HEADER - ISANG "Notifications" LANG
     overlayContent.innerHTML = `
         <div class="overlay-header">
             <h3><i class="fas fa-bell"></i> Notifications</h3>
@@ -314,21 +315,8 @@ function showNotificationsPanel() {
             </button>
         </div>
         <div class="notifications-container">
-            <div class="notifications-header">
-                <h4>Recent Alerts & Updates</h4>
-                <p class="notifications-subtitle">Past water level changes and system alerts</p>
-            </div>
             <div class="notifications-list" id="mobileNotificationsList">
-                <div class="notification-item">
-                    <div class="notification-icon">
-                        <i class="fas fa-info-circle"></i>
-                    </div>
-                    <div class="notification-content">
-                        <div class="notification-title">System Ready</div>
-                        <div class="notification-message">Flood monitoring system is active and receiving data</div>
-                        <div class="notification-time">Just now</div>
-                    </div>
-                </div>
+                <!-- DYNAMIC CONTENT DITO -->
             </div>
             <div class="notifications-actions">
                 <button class="clear-notifications-btn">
@@ -356,7 +344,7 @@ function showNotificationsPanel() {
     
     console.log('Notifications panel opened');
 }
-
+// === Load Mobile Notifications ===
 // === Load Mobile Notifications ===
 function loadMobileNotifications() {
     const notificationsList = document.getElementById('mobileNotificationsList');
@@ -365,6 +353,7 @@ function loadMobileNotifications() {
     const alertItems = document.querySelectorAll('#alertList .alert-item');
     const notifications = [];
     
+    // SYSTEM STATUS NOTIFICATION - LAGI NANDITO
     notifications.push({
         type: 'info',
         title: 'System Status',
@@ -373,8 +362,9 @@ function loadMobileNotifications() {
         icon: 'fa-info-circle'
     });
     
+    // REAL ALERTS FROM DASHBOARD
     alertItems.forEach((alert, index) => {
-        if (index < 8) {
+        if (index < 8) { // Limit to 8 alerts
             const icon = alert.querySelector('i').className;
             const message = alert.querySelector('span').textContent;
             const type = alert.classList.contains('warning') ? 'warning' : 
@@ -395,7 +385,8 @@ function loadMobileNotifications() {
         }
     });
     
-    if (notifications.length <= 1) {
+    // KUNG WALANG ALERTS, LAGYAN NG "NO ALERTS" MESSAGE
+    if (notifications.length === 1) { // System Status lang ang nandito
         notifications.push({
             type: 'info',
             title: 'No Recent Alerts',
@@ -428,20 +419,25 @@ function loadMobileNotifications() {
 }
 
 // === FIXED: Enhanced Clear Notifications with Smooth Animation ===
+// === FIXED: Enhanced Clear Notifications with Smooth Animation ===
 function clearNotifications() {
     const alertList = document.getElementById('alertList');
     const notificationItems = document.querySelectorAll('.notification-item');
     
-    // Smoothly remove all notification items
+    // Smoothly remove all notification items EXCEPT SYSTEM STATUS
     notificationItems.forEach((item, index) => {
-        setTimeout(() => {
-            item.classList.add('removing');
+        const title = item.querySelector('.notification-title')?.textContent;
+        // HUWAG I-CLEAR ANG SYSTEM STATUS
+        if (title !== 'System Status') {
             setTimeout(() => {
-                if (item.parentElement) {
-                    item.remove();
-                }
-            }, 300);
-        }, index * 100);
+                item.classList.add('removing');
+                setTimeout(() => {
+                    if (item.parentElement) {
+                        item.remove();
+                    }
+                }, 300);
+            }, index * 100);
+        }
     });
     
     // Update alert list with smooth transition
