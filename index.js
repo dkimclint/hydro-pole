@@ -1346,7 +1346,7 @@ function handleFloodDataUpdate(payload) {
                 console.log('🔄 SMART: Processing new data from', newRecord.device_id);
                  
                 // Show immediate notification but throttle full reload
-                showWaterLevelAlert(`New data: ${newRecord.device_id} - ${newRecord.water_level}ft`, 'info');
+                showWaterLevelAlert(` Data: ${newRecord.device_id} - ${newRecord.water_level}ft`, 'info');
                 
                 // Only do full reload if it's been more than 10 seconds
                 if (Date.now() - lastStationUpdate > 10000) {
@@ -2066,9 +2066,9 @@ function loadDarkModePreference() {
     }
 }
 
-// === Update Display with New Data ===
+// === Update Display with Data ===
 function updateDisplay(newData) {
-    console.log('📊 Updating display with new data:', newData);
+    console.log('📊 Updating display with data:', newData);
     
     // Show immediate notification
     if (newData.device_id && newData.water_level !== undefined) {
@@ -2077,10 +2077,10 @@ function updateDisplay(newData) {
         let alertMessage = '';
         
         if (status === 'danger') {
-            alertMessage = `NEW DANGER: ${newData.device_id} water level ${newData.water_level} ft`;
+            alertMessage = `DANGER: ${newData.device_id} water level ${newData.water_level} ft`;
             alertType = 'danger';
         } else if (status === 'warning') {
-            alertMessage = `NEW ALERT: ${newData.device_id} water level ${newData.water_level} ft`;
+            alertMessage = `ALERT: ${newData.device_id} water level ${newData.water_level} ft`;
             alertType = 'warning';
         }
         
