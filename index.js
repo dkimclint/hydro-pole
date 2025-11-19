@@ -358,7 +358,6 @@ function showNotificationsPanel() {
 }
 
 // === Load Mobile Notifications ===
-// === FIXED: Load Mobile Notifications ===
 function loadMobileNotifications() {
     const notificationsList = document.getElementById('mobileNotificationsList');
     if (!notificationsList) return;
@@ -366,7 +365,6 @@ function loadMobileNotifications() {
     const alertItems = document.querySelectorAll('#alertList .alert-item');
     const notifications = [];
     
-    // Add system status notification
     notifications.push({
         type: 'info',
         title: 'System Status',
@@ -375,9 +373,8 @@ function loadMobileNotifications() {
         icon: 'fa-info-circle'
     });
     
-    // Add alerts from dashboard
     alertItems.forEach((alert, index) => {
-        if (index < 8) { // Limit to 8 notifications
+        if (index < 8) {
             const icon = alert.querySelector('i').className;
             const message = alert.querySelector('span').textContent;
             const type = alert.classList.contains('warning') ? 'warning' : 
@@ -398,7 +395,6 @@ function loadMobileNotifications() {
         }
     });
     
-    // If no alerts, show placeholder
     if (notifications.length <= 1) {
         notifications.push({
             type: 'info',
@@ -409,7 +405,7 @@ function loadMobileNotifications() {
         });
     }
     
-    // Add smooth transition
+    // Add smooth transition for the entire list
     notificationsList.style.opacity = '0';
     notificationsList.style.transition = 'opacity 0.3s ease';
     
@@ -1457,7 +1453,7 @@ function startRealTimeUpdates() {
     // Smart throttled real-time
     setupRealtimeUpdates();
     
-    // Fallback: Check every 15 sec
+    // Fallback: Check every 15
     setInterval(() => {
         console.log('🔄 Scheduled background refresh');
         loadStations();
