@@ -8,7 +8,7 @@
   
   --accent-teal: #0d9488;
   --warning-red: #dc2626;
-  --alert-yellow: #cbb613;
+  --alert-yellow: #ea580c;
   --safe-green: #16a34a;
   
   --text-900: #1e293b;
@@ -883,9 +883,9 @@ button, input {
 }
 
 .enhanced-level-status.warning {
-    background: rgba(234, 167, 12, 0.1);
+    background: rgba(234, 171, 12, 0.1);
     color: var(--alert-yellow);
-    border: 1px solid rgba(234, 167, 12, 0.3);
+    border: 1px solid rgba(234, 160, 12, 0.3);
 }
 
 .enhanced-level-status.danger {
@@ -1056,7 +1056,7 @@ button, input {
 .water-level-badge.warning {
     background: var(--alert-yellow);
     color: white;
-    border: 1px solid var(--alert-yellow);
+    border: 1px solid var(--alert-yello);
 }
 
 .water-level-badge.danger {
@@ -1085,7 +1085,7 @@ button, input {
 
 .station-status.warning {
     background: var(--alert-yellow);
-    box-shadow: 0 0 0 2px rgba(234, 167, 12, 0.3);
+    box-shadow: 0 0 0 2px rgba(234, 175, 12, 0.2);
 }
 
 .station-status.danger {
@@ -1127,7 +1127,7 @@ button, input {
 
 .station-marker.enhanced.warning .station-dot {
     background: var(--alert-yellow);
-    box-shadow: 0 0 0 3px rgba(234, 167, 12, 0.3);
+    box-shadow: 0 0 0 3px rgba(234, 160, 12, 0.3);
 }
 
 .station-marker.enhanced.danger .station-pulse {
@@ -1367,7 +1367,7 @@ button, input {
 }
 
 .range-fill.warning {
-    background: linear-gradient(90deg, var(--alert-yellow), #f9de16);
+    background: linear-gradient(90deg, var(--alert-yellow), #f9cf16);
 }
 
 .range-fill.danger {
@@ -1418,9 +1418,9 @@ button, input {
 }
 
 .enhanced-level-status.warning {
-    background: rgba(234, 167, 12, 0.1);
+    background: rgba(234, 186, 12, 0.1);
     color: var(--alert-yellow);
-    border-color: rgba(234, 167, 12, 0.3);
+    border-color: rgba(166, 161, 5, 0.3);
 }
 
 .enhanced-level-status.danger {

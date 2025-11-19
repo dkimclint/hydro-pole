@@ -1051,18 +1051,6 @@ function createEnhancedStationPopupContent(station, locationName, waterLevel, st
             
             <div class="enhanced-popup-divider"></div>
             
-            <!-- MEDIAN FILTER INFO -->
-            <div class="data-quality-info">
-                <i class="fas fa-chart-line"></i>
-                <span>Data Quality: 10-reading Median Filter</span>
-                <div class="quality-tooltip">
-                    <i class="fas fa-info-circle"></i>
-                    <div class="tooltip-text">
-                        Uses median of 10 ultrasonic readings to eliminate spikes and ensure accurate water level data
-                    </div>
-                </div>
-            </div>
-            
             <div class="enhanced-popup-content">
                 <div class="enhanced-info-grid">
                     ${waterLevel !== null ? `
