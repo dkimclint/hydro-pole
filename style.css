@@ -2486,3 +2486,51 @@ body.dark-mode .station-select-dropdown:focus {
         font-size: 0.7rem !important;
     }
 }
+
+/* ===== FIXED: Smaller Mobile Station Selector ===== */
+.mobile-station-selector {
+    top: 70px !important; /* Mas mababa */
+    left: 0.5rem !important;
+    right: 0.5rem !important;
+}
+
+.station-selector-container {
+    max-width: 200px !important; /* Mas maliit ang width */
+}
+
+.station-select-dropdown {
+    padding: 0.5rem 2rem 0.5rem 0.75rem !important; /* Mas compact padding */
+    font-size: 1.0rem !important; /* Mas maliit na font */
+    height: 50px !important; /* Fixed height */
+    border-radius: 10px !important; /* Slightly smaller radius */
+}
+
+.station-select-icon {
+    right: 0.6rem !important;
+    font-size: 0.8rem !important;
+}
+
+/* Mas maliit pa for very small screens */
+@media (max-width: 380px) {
+    .station-selector-container {
+        max-width: 180px !important;
+    }
+    
+    .station-select-dropdown {
+        padding: 0.4rem 1.8rem 0.4rem 0.6rem !important;
+        font-size: 0.75rem !important;
+        height: 36px !important;
+    }
+}
+
+/* Landscape orientation */
+@media (max-height: 500px) and (orientation: landscape) {
+    .mobile-station-selector {
+        top: 60px !important;
+    }
+    
+    .station-select-dropdown {
+        height: 34px !important;
+        padding: 0.3rem 1.8rem 0.3rem 0.6rem !important;
+    }
+}
