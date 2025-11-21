@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
     requestUserLocation();
     initDashboard();
     loadInitialData();
-    initMobileStationSelector();
+    initMobileStationButton(); // PALITAN ITO
     
     console.log('HydroPole App initialized successfully!');
 });
@@ -173,38 +173,70 @@ function initDashboard() {
     });
 }
 
-// Sa initMobileStationSelector function, dagdagan mo to:
-function initMobileStationSelector() {
-    console.log('Initializing mobile station selector...');
+function initMobileStationButton() {
+    console.log('Initializing mobile station button...');
     
-    const stationSelect = document.getElementById('mobileStationSelect');
-    if (!stationSelect) return;
+    const stationBtn = document.getElementById('mobileStationBtn');
+    const stationSelector = document.querySelector('.station-selector-container');
+    const dropdown = document.getElementById('mobileStationSelect');
     
-    // Tanggalin ang default option pag mobile
-    if (isMobile) {
-        // Remove the default "Select a station..." option
-        if (stationSelect.options.length > 0 && stationSelect.options[0].value === "") {
-            stationSelect.remove(0);
+    console.log('Button found:', !!stationBtn);
+    console.log('Selector container found:', !!stationSelector);
+    console.log('Dropdown found:', !!dropdown);
+    
+    // Check current state
+    console.log('Initial stationSelector class:', stationSelector.className);
+    
+    if (!stationBtn || !stationSelector) return;
+    
+    stationBtn.addEventListener('click', function(e) {
+        e.stopPropagation(); // Important: prevent event bubbling
+        console.log('Mobile Station button clicked!');
+        
+        // Toggle the dropdown
+        stationSelector.classList.toggle('active');
+        
+        console.log('After toggle - stationSelector class:', stationSelector.className);
+        console.log('Is active?', stationSelector.classList.contains('active'));
+        
+        // If opening, focus on the dropdown
+        if (stationSelector.classList.contains('active')) {
+            console.log('Dropdown should be visible now');
+            const dropdown = document.getElementById('mobileStationSelect');
+            if (dropdown) {
+                setTimeout(() => {
+                    dropdown.focus();
+                }, 100);
+            }
         }
         
-        // Add a placeholder attribute instead
-        stationSelect.setAttribute('placeholder', 'Choose station...');
-    }
+        this.style.transform = 'scale(0.9)';
+        setTimeout(() => {
+            this.style.transform = '';
+        }, 150);
+    });
     
-    // Populate the dropdown when stations are loaded
-    populateStationSelector();
-    
-    // Add event listener for station selection
-    stationSelect.addEventListener('change', function() {
-        const selectedStationId = this.value;
-        if (selectedStationId) {
-            selectStationFromDropdown(selectedStationId);
-            // Reset selection after choosing
-            this.value = '';
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!stationBtn.contains(e.target) && !stationSelector.contains(e.target)) {
+            console.log('Click outside - closing dropdown');
+            stationSelector.classList.remove('active');
         }
     });
     
-    console.log('Mobile station selector initialized');
+    // Close dropdown when station is selected
+    const stationSelect = document.getElementById('mobileStationSelect');
+    if (stationSelect) {
+        stationSelect.addEventListener('change', function() {
+            console.log('Station selected:', this.value);
+            if (this.value) {
+                stationSelector.classList.remove('active');
+                selectStationFromDropdown(this.value);
+            }
+        });
+    }
+    
+    console.log('Mobile station button initialized');
 }
 
 // === Populate Station Selector Dropdown ===
@@ -270,7 +302,6 @@ function selectStationFromDropdown(stationId) {
 
     showWaterLevelAlert(`Navigating to ${station.device_id}`, "info");
 }
-
 
 // === Update Station Selector when stations change ===
 function updateStationSelector() {
@@ -355,6 +386,19 @@ function initEventListeners() {
         });
     }
     
+    // Mobile map controls - Station Selector button
+    const mobileStationBtn = document.getElementById('mobileStationBtn');
+    if (mobileStationBtn) {
+        mobileStationBtn.addEventListener('click', function() {
+            console.log('Mobile Station button clicked');
+            // Handled in initMobileStationButton
+            this.style.transform = 'scale(0.9)';
+            setTimeout(() => {
+                this.style.transform = '';
+            }, 150);
+        });
+    }
+    
     // Search toggle
     const searchToggle = document.getElementById('searchToggle');
     if (searchToggle) {
@@ -406,6 +450,8 @@ function initEventListeners() {
         const searchToggle = document.getElementById('searchToggle');
         const stationSearchContainer = document.querySelector('.station-search-container');
         const searchStationBtn = document.getElementById('searchStationBtn');
+        const stationSelector = document.querySelector('.station-selector-container');
+        const stationBtn = document.getElementById('mobileStationBtn');
         
         if (searchContainer && searchToggle && 
             !searchContainer.contains(e.target) && 
@@ -417,6 +463,13 @@ function initEventListeners() {
             !stationSearchContainer.contains(e.target) && 
             !searchStationBtn.contains(e.target)) {
             stationSearchContainer.classList.remove('active');
+        }
+        
+        // Close station selector when clicking outside
+        if (stationSelector && stationBtn && 
+            !stationSelector.contains(e.target) && 
+            !stationBtn.contains(e.target)) {
+            stationSelector.classList.remove('active');
         }
         
         // Close mobile menu when clicking outside content
