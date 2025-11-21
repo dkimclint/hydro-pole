@@ -211,59 +211,65 @@ function initMobileStationSelector() {
 function populateStationSelector() {
     const stationSelect = document.getElementById('mobileStationSelect');
     if (!stationSelect) return;
-    
-    // Clear existing options except the first one
-    while (stationSelect.options.length > 1) {
-        stationSelect.remove(1);
-    }
-    
-    // Add stations to dropdown
+
+    // CLEAR EVERYTHING (fix duplicate issue)
+    stationSelect.innerHTML = "";
+
+    // Add placeholder
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = "Select a station...";
+    stationSelect.appendChild(placeholder);
+
+    // Add stations
     stations.forEach(station => {
-        const option = document.createElement('option');
+        const option = document.createElement("option");
         option.value = station.device_id || station.id;
-        
-        // Create display text with water level if available
+
         let displayText = station.name || station.device_id;
+
         if (station.water_level !== null && !isNaN(parseFloat(station.water_level))) {
-            const waterLevel = parseFloat(station.water_level).toFixed(1);
+            const wl = parseFloat(station.water_level).toFixed(1);
             const status = getWaterLevelStatus(station.water_level);
-            
-            // Add emoji indicator based on status
-            let statusEmoji = '⚪'; // Default/offline
-            if (status === 'safe') statusEmoji = '🟢';
-            else if (status === 'warning') statusEmoji = '🟡';
-            else if (status === 'danger') statusEmoji = '🔴';
-            
-            displayText = `${statusEmoji} ${displayText} (${waterLevel}ft)`;
+
+            let emoji = "⚪";
+            if (status === "safe") emoji = "🟢";
+            else if (status === "warning") emoji = "🟡";
+            else if (status === "danger") emoji = "🔴";
+
+            displayText = `${emoji} ${displayText} (${wl}ft)`;
         } else {
             displayText = `⚪ ${displayText} (No data)`;
         }
-        
+
         option.textContent = displayText;
         stationSelect.appendChild(option);
     });
-    
-    console.log(`Populated station selector with ${stations.length} stations`);
+
+    console.log(`Station selector populated (${stations.length} stations)`);
 }
 
 // === Select Station from Dropdown ===
 function selectStationFromDropdown(stationId) {
-    console.log('Selecting station from dropdown:', stationId);
-    
-    const station = stations.find(s => 
-        s.device_id === stationId || 
-        s.id === stationId
-    );
-    
-    if (station) {
-        selectStation(station);
-        
-        // Show confirmation
-        showWaterLevelAlert(`Navigating to ${station.name || station.device_id}`, 'info');
-    } else {
-        console.warn('Station not found:', stationId);
-        showWaterLevelAlert('Station not found', 'warning');
+    console.log("SELECT:", stationId);
+
+    // Find station using the correct Supabase field: device_id
+    const station = stations.find(s => s.device_id === stationId);
+
+    if (!station) {
+        showWaterLevelAlert("Station not found", "warning");
+        return;
     }
+
+    // Zoom to station
+    map.flyTo([station.latitude, station.longitude], 17, {
+        duration: 1.3
+    });
+
+    // Open popup with details
+    selectStation(station);
+
+    showWaterLevelAlert(`Navigating to ${station.device_id}`, "info");
 }
 
 // === Update Station Selector when stations change ===
@@ -1304,16 +1310,6 @@ function createEnhancedStationPopupContent(station, locationName, waterLevel, st
                         </div>
                     </div>
                     `}
-                    
-                    <div class="enhanced-info-item">
-                        <div class="enhanced-info-icon">
-                            <i class="fas fa-map-marker-alt"></i>
-                        </div>
-                        <div class="enhanced-info-content">
-                            <div class="enhanced-info-label">Coordinates</div>
-                            <div class="enhanced-info-value coordinates">${parseFloat(station.latitude).toFixed(6)}, ${parseFloat(station.longitude).toFixed(6)}</div>
-                        </div>
-                    </div>
                     
                     <div class="enhanced-info-item">
                         <div class="enhanced-info-icon">

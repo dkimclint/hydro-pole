@@ -2362,3 +2362,75 @@ body.dark-mode .station-select-dropdown:focus {
         display: none !important;
     }
 }
+
+/* ===== THESIS MODE: Compact Station Info Popup ===== */
+.enhanced-popup-container {
+    max-width: 240px !important;
+    padding: 0 !important;
+}
+
+.enhanced-popup-header {
+    padding: 10px 12px !important;
+}
+
+.enhanced-popup-title {
+    font-size: 0.95rem !important;
+}
+
+.enhanced-popup-subtitle {
+    font-size: 0.7rem !important;
+}
+
+.enhanced-popup-content {
+    padding: 12px !important;
+}
+
+.enhanced-info-grid {
+    gap: 10px !important;
+}
+
+.enhanced-info-item {
+    gap: 8px !important;
+}
+
+.enhanced-info-icon {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 0.75rem !important;
+}
+
+.enhanced-info-label {
+    font-size: 0.65rem !important;
+    margin-bottom: 2px !important;
+}
+
+.enhanced-info-value {
+    font-size: 0.8rem !important;
+    margin-bottom: 2px !important;
+}
+
+.enhanced-info-value.level-value {
+    font-size: 0.9rem !important;
+}
+
+.enhanced-level-status {
+    font-size: 0.6rem !important;
+    padding: 3px 8px !important;
+    margin-top: 4px !important;
+}
+
+.water-level-range {
+    margin-top: 8px !important;
+}
+
+.range-labels {
+    font-size: 0.55rem !important;
+}
+
+.range-bar {
+    height: 6px !important;
+}
+
+.enhanced-popup-footer {
+    padding: 8px 12px !important;
+}
