@@ -253,7 +253,6 @@ function populateStationSelector() {
 function selectStationFromDropdown(stationId) {
     console.log("SELECT:", stationId);
 
-    // Find station using the correct Supabase field: device_id
     const station = stations.find(s => s.device_id === stationId);
 
     if (!station) {
@@ -261,16 +260,17 @@ function selectStationFromDropdown(stationId) {
         return;
     }
 
-    // Zoom to station
+    // Zoom directly to station
     map.flyTo([station.latitude, station.longitude], 17, {
         duration: 1.3
     });
 
-    // Open popup with details
+    // Open popup
     selectStation(station);
 
     showWaterLevelAlert(`Navigating to ${station.device_id}`, "info");
 }
+
 
 // === Update Station Selector when stations change ===
 function updateStationSelector() {
@@ -1363,12 +1363,20 @@ function selectStation(station) {
     // Only move to station location, don't show panel
     if (station.latitude && station.longitude && map) {
         const stationLatLng = [parseFloat(station.latitude), parseFloat(station.longitude)];
-        const zoomLevel = 16;
+        const currentZoom = map.getZoom(); // Keep current zoom level
         
-        // Use flyTo for smooth animation to the station location
-        map.flyTo(stationLatLng, zoomLevel, {
-            duration: 1.5,
-            easeLinearity: 0.25
+        // Custom smooth pan without zoom
+        const currentCenter = map.getCenter();
+        const targetCenter = L.latLng(stationLatLng);
+        
+        // Calculate distance for smoother animation
+        const distance = currentCenter.distanceTo(targetCenter);
+        const duration = Math.min(1.5, Math.max(0.8, distance / 1000)); // Dynamic duration based on distance
+        
+        map.flyTo(stationLatLng, currentZoom, {
+            duration: duration,
+            easeLinearity: 0.25,
+            noMoveStart: true
         });
         
         // Open station marker popup after animation
@@ -1385,7 +1393,7 @@ function selectStation(station) {
             if (stationMarker) {
                 stationMarker.openPopup();
             }
-        }, 1600);
+        }, duration * 1000);
     }
     
     if (isMobile) {
