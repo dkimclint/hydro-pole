@@ -37,6 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
     requestUserLocation();
     initDashboard();
     loadInitialData();
+    initMobileStationSelector();
     
     console.log('HydroPole App initialized successfully!');
 });
@@ -60,7 +61,8 @@ function checkMobileDevice() {
 function initMap() {
     console.log('Initializing map...');
     
-    const defaultCoords = [14.8322, 120.7333];
+    // Gamitin ang main station coordinates bilang default
+    const defaultCoords = [14.847090, 120.813300]; // HYDROPOLE01 coordinates
     const zoomLevel = isMobile ? 12 : 13;
     
     map = L.map('map', {
@@ -98,7 +100,41 @@ function initMap() {
         map.invalidateSize();
     }, 100);
     
-    console.log('Map initialized successfully');
+    console.log('Map initialized successfully with main station focus');
+}
+
+// === Focus on Main Station when Logo is Clicked ===
+function focusOnMainStation() {
+    console.log('Logo clicked - focusing on main station...');
+    
+    // Hanapin ang HYDROPOLE01 station
+    const mainStation = stations.find(station => 
+        station.device_id === 'HYDROPOLE01'
+    );
+    
+    if (mainStation) {
+        console.log('Main station found:', mainStation);
+        selectStation(mainStation);
+        showWaterLevelAlert('Navigating to main monitoring station', 'info');
+    } else {
+        console.log('Main station not found, using default coordinates');
+        
+        // Default coordinates kung wala pang data
+        const defaultCoords = [14.847090, 120.813300];
+        const zoomLevel = 16;
+        
+        if (map) {
+            map.flyTo(defaultCoords, zoomLevel, {
+                duration: 1.5,
+                easeLinearity: 0.25
+            });
+            
+            showWaterLevelAlert('Navigating to monitoring area', 'info');
+        }
+    }
+    
+    // I-prevent ang default link behavior
+    return false;
 }
 
 // === Initialize Dashboard ===
@@ -137,9 +173,118 @@ function initDashboard() {
     });
 }
 
+// Sa initMobileStationSelector function, dagdagan mo to:
+function initMobileStationSelector() {
+    console.log('Initializing mobile station selector...');
+    
+    const stationSelect = document.getElementById('mobileStationSelect');
+    if (!stationSelect) return;
+    
+    // Tanggalin ang default option pag mobile
+    if (isMobile) {
+        // Remove the default "Select a station..." option
+        if (stationSelect.options.length > 0 && stationSelect.options[0].value === "") {
+            stationSelect.remove(0);
+        }
+        
+        // Add a placeholder attribute instead
+        stationSelect.setAttribute('placeholder', 'Choose station...');
+    }
+    
+    // Populate the dropdown when stations are loaded
+    populateStationSelector();
+    
+    // Add event listener for station selection
+    stationSelect.addEventListener('change', function() {
+        const selectedStationId = this.value;
+        if (selectedStationId) {
+            selectStationFromDropdown(selectedStationId);
+            // Reset selection after choosing
+            this.value = '';
+        }
+    });
+    
+    console.log('Mobile station selector initialized');
+}
+
+// === Populate Station Selector Dropdown ===
+function populateStationSelector() {
+    const stationSelect = document.getElementById('mobileStationSelect');
+    if (!stationSelect) return;
+    
+    // Clear existing options except the first one
+    while (stationSelect.options.length > 1) {
+        stationSelect.remove(1);
+    }
+    
+    // Add stations to dropdown
+    stations.forEach(station => {
+        const option = document.createElement('option');
+        option.value = station.device_id || station.id;
+        
+        // Create display text with water level if available
+        let displayText = station.name || station.device_id;
+        if (station.water_level !== null && !isNaN(parseFloat(station.water_level))) {
+            const waterLevel = parseFloat(station.water_level).toFixed(1);
+            const status = getWaterLevelStatus(station.water_level);
+            
+            // Add emoji indicator based on status
+            let statusEmoji = '⚪'; // Default/offline
+            if (status === 'safe') statusEmoji = '🟢';
+            else if (status === 'warning') statusEmoji = '🟡';
+            else if (status === 'danger') statusEmoji = '🔴';
+            
+            displayText = `${statusEmoji} ${displayText} (${waterLevel}ft)`;
+        } else {
+            displayText = `⚪ ${displayText} (No data)`;
+        }
+        
+        option.textContent = displayText;
+        stationSelect.appendChild(option);
+    });
+    
+    console.log(`Populated station selector with ${stations.length} stations`);
+}
+
+// === Select Station from Dropdown ===
+function selectStationFromDropdown(stationId) {
+    console.log('Selecting station from dropdown:', stationId);
+    
+    const station = stations.find(s => 
+        s.device_id === stationId || 
+        s.id === stationId
+    );
+    
+    if (station) {
+        selectStation(station);
+        
+        // Show confirmation
+        showWaterLevelAlert(`Navigating to ${station.name || station.device_id}`, 'info');
+    } else {
+        console.warn('Station not found:', stationId);
+        showWaterLevelAlert('Station not found', 'warning');
+    }
+}
+
+// === Update Station Selector when stations change ===
+function updateStationSelector() {
+    if (isMobile) {
+        populateStationSelector();
+    }
+}
+
 // === Initialize Event Listeners ===
 function initEventListeners() {
     console.log('Initializing event listeners...');
+    
+    // Logo click event
+    const brandLogo = document.querySelector('.brand');
+    if (brandLogo) {
+        brandLogo.addEventListener('click', function(e) {
+            e.preventDefault();
+            focusOnMainStation();
+        });
+    }
     
     // Dark mode toggle
     const darkModeToggle = document.getElementById('darkModeToggle');
@@ -344,7 +489,7 @@ function showNotificationsPanel() {
     
     console.log('Notifications panel opened');
 }
-// === Load Mobile Notifications ===
+
 // === Load Mobile Notifications ===
 function loadMobileNotifications() {
     const notificationsList = document.getElementById('mobileNotificationsList');
@@ -418,7 +563,6 @@ function loadMobileNotifications() {
     }, 300);
 }
 
-// === FIXED: Enhanced Clear Notifications with Smooth Animation ===
 // === FIXED: Enhanced Clear Notifications with Smooth Animation ===
 function clearNotifications() {
     const alertList = document.getElementById('alertList');
@@ -557,6 +701,7 @@ async function loadStations() {
             stations = [];
             updateStationMarkers();
             updateStationsCount();
+            updateStationSelector();
             if (refreshBtn) {
                 refreshBtn.classList.remove('loading');
             }
@@ -652,10 +797,10 @@ async function loadStations() {
                 gpsSource = 'flood_data';
             }
             
-            // Special handling for HYDROPOLE_001 - ensure it gets proper coordinates
-            if (deviceId === 'HYDROPOLE_001') {
+            // Special handling for HYDROPOLE01 - ensure it gets proper coordinates
+            if (deviceId === 'HYDROPOLE01') {
                 if (!lat || isNaN(lat) || !isValidCoordinate(lat, lng)) {
-                    console.log('Setting default coordinates for HYDROPOLE_001');
+                    console.log('Setting default coordinates for HYDROPOLE01');
                     lat = 14.847090;
                     lng = 120.813300;
                     gpsSource = 'default_fallback';
@@ -714,8 +859,8 @@ async function loadStations() {
                     gpsSource = 'device_db';
                 }
                 
-                // Special handling for HYDROPOLE_001
-                if (device.device_id === 'HYDROPOLE_001') {
+                // Special handling for HYDROPOLE01
+                if (device.device_id === 'HYDROPOLE01') {
                     if (!lat || isNaN(lat)) {
                         lat = 14.847090;
                         lng = 120.813300;
@@ -759,6 +904,7 @@ async function loadStations() {
         renderStationsList();
         updateStationMarkers();
         updateStationsCount();
+        updateStationSelector();
         
         if (stations.length > 0) {
             console.log(`✅ Loaded ${stations.length} monitoring station(s) from database`);
@@ -1020,7 +1166,7 @@ function createStationMarker(station) {
     try {
         const marker = L.marker([parseFloat(station.latitude), parseFloat(station.longitude)], {
             icon: stationIcon,
-            zIndexOffset: station.device_id === 'HYDROPOLE_001' ? 2000 : 1000
+            zIndexOffset: station.device_id === 'HYDROPOLE01' ? 2000 : 1000
         });
         
         // Add popup with station info
@@ -1111,7 +1257,7 @@ function createEnhancedStationPopupContent(station, locationName, waterLevel, st
                 </div>
                 <div class="enhanced-popup-title-section">
                     <div class="enhanced-popup-title">${station.name || 'Monitoring Station'}</div>
-                    <div class="enhanced-popup-subtitle">${station.device_id === 'HYDROPOLE_001' ? 'Primary Monitoring Station' : 'Live Monitoring Station'}</div>
+                    <div class="enhanced-popup-subtitle">${station.device_id === 'HYDROPOLE01' ? 'Primary Monitoring Station' : 'Live Monitoring Station'}</div>
                 </div>
             </div>
             
@@ -1205,7 +1351,7 @@ function createEnhancedStationPopupContent(station, locationName, waterLevel, st
             <div class="enhanced-popup-footer">
                 <div class="enhanced-accuracy-info">
                     <i class="fas fa-satellite"></i>
-                    ${station.device_id === 'HYDROPOLE_001' ? 'Primary Station • Real-time GPS' : 'Live Monitoring • Real-time GPS'}
+                    ${station.device_id === 'HYDROPOLE01' ? 'Primary Station • Real-time GPS' : 'Live Monitoring • Real-time GPS'}
                 </div>
             </div>
         </div>
@@ -1440,6 +1586,7 @@ function updateStationsListUI() {
     
     // Simple update - just refresh the entire list
     renderStationsList();
+    updateStationSelector();
 }
 
 // === Start Real-time Updates ===
@@ -2158,3 +2305,4 @@ window.hideMobileMenu = hideMobileMenu;
 window.loadStations = loadStations;
 window.clearNotifications = clearNotifications;
 window.closeAlertSmoothly = closeAlertSmoothly;
+window.focusOnMainStation = focusOnMainStation;

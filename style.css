@@ -2263,3 +2263,102 @@ body.dark-mode .notification-title {
 body.dark-mode .notification-message {
     color: #e2e8f0;
 }
+
+/* ===== FIXED: Mobile Station Selector Styles ===== */
+.mobile-station-selector {
+    position: fixed;
+    top: 80px;
+    left: 1rem;
+    right: 1rem;
+    z-index: 1000;
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+}
+
+.station-selector-container {
+    position: relative;
+    width: 100%;
+    max-width: 280px;
+    pointer-events: auto;
+}
+
+.station-select-dropdown {
+    width: 100%;
+    padding: 0.875rem 3rem 0.875rem 1rem;
+    border: 2px solid var(--border-light);
+    border-radius: var(--border-radius-lg);
+    background: var(--bg-card);
+    backdrop-filter: blur(20px);
+    color: var(--text-900);
+    font-size: 0.9rem;
+    font-weight: 500;
+    box-shadow: var(--shadow-xl);
+    cursor: pointer;
+    appearance: none;
+    transition: var(--transition);
+    font-family: 'Inter', sans-serif;
+}
+
+.station-select-dropdown:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    outline: none;
+}
+
+.station-select-dropdown:hover {
+    border-color: var(--accent-blue);
+}
+
+.station-select-icon {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--primary-blue);
+    font-size: 1rem;
+    pointer-events: none;
+}
+
+/* Dark mode adjustments */
+body.dark-mode .station-select-dropdown {
+    background: var(--bg-card);
+    color: var(--text-100);
+    border-color: var(--border-light);
+}
+
+body.dark-mode .station-select-dropdown:focus {
+    border-color: var(--primary-blue);
+}
+
+/* Mobile adjustments */
+@media (max-width: 480px) {
+    .mobile-station-selector {
+        top: 70px;
+        left: 0.5rem;
+        right: 0.5rem;
+    }
+    
+    .station-select-dropdown {
+        padding: 0.75rem 2.5rem 0.75rem 0.875rem;
+        font-size: 0.85rem;
+    }
+    
+    .station-select-icon {
+        right: 0.75rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Landscape orientation adjustments */
+@media (max-height: 500px) and (orientation: landscape) {
+    .mobile-station-selector {
+        top: 60px;
+    }
+}
+
+@media (max-width: 768px) {
+    #searchStationBtn {
+        display: none !important;
+    }
+}
