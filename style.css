@@ -2370,3 +2370,119 @@ body.dark-mode .station-select-dropdown:focus {
     overflow: visible !important;
     border-radius: 10px !important;
 }
+
+/* ===== FIXED: Smaller Popup Text Sizes - READABLE BUT COMPACT ===== */
+.enhanced-popup-container {
+    max-width: 260px !important;
+    font-size: 0.85rem !important;
+}
+
+.enhanced-popup-title {
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    line-height: 1.2 !important;
+}
+
+.enhanced-popup-subtitle {
+    font-size: 0.75rem !important;
+    opacity: 0.8 !important;
+    line-height: 1.2 !important;
+}
+
+.enhanced-info-label {
+    font-size: 0.7rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 2px !important;
+}
+
+.enhanced-info-value {
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 3px !important;
+    line-height: 1.2 !important;
+}
+
+.enhanced-info-value.level-value {
+    font-size: 0.9rem !important;
+    font-weight: 700 !important;
+}
+
+.enhanced-level-status {
+    font-size: 0.65rem !important;
+    padding: 4px 8px !important;
+    margin-top: 4px !important;
+}
+
+.enhanced-info-date {
+    font-size: 0.65rem !important;
+    margin-top: 1px !important;
+}
+
+.enhanced-info-value.coordinates {
+    font-size: 0.7rem !important;
+}
+
+.enhanced-info-value.location {
+    font-size: 0.75rem !important;
+    line-height: 1.2 !important;
+}
+
+/* Adjust water level range */
+.water-level-range {
+    margin-top: 8px !important;
+}
+
+.range-labels {
+    font-size: 0.6rem !important;
+    margin-bottom: 2px !important;
+}
+
+.range-bar {
+    height: 6px !important;
+}
+
+.range-indicators {
+    margin-top: 1px !important;
+}
+
+.range-safe, .range-warning, .range-danger {
+    height: 2px !important;
+}
+
+/* Adjust icons size */
+.enhanced-popup-icon {
+    font-size: 1.1rem !important;
+    width: 36px !important;
+    height: 36px !important;
+}
+
+.enhanced-info-icon {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 0.8rem !important;
+}
+
+/* Footer adjustments */
+.enhanced-popup-footer {
+    padding: 8px 12px !important;
+}
+
+.enhanced-accuracy-info {
+    font-size: 0.65rem !important;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .enhanced-popup-container {
+        max-width: 240px !important;
+        font-size: 0.8rem !important;
+    }
+    
+    .enhanced-popup-title {
+        font-size: 0.95rem !important;
+    }
+    
+    .enhanced-popup-subtitle {
+        font-size: 0.7rem !important;
+    }
+}
