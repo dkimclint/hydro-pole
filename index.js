@@ -184,7 +184,7 @@ function initMobileStationButton() {
     console.log('Selector container found:', !!stationSelector);
     console.log('Dropdown found:', !!dropdown);
     
-    // Check current state
+    // Check current state 
     console.log('Initial stationSelector class:', stationSelector.className);
     
     if (!stationBtn || !stationSelector) return;
@@ -239,9 +239,9 @@ function initMobileStationButton() {
     console.log('Mobile station button initialized');
 }
 
-// === Populate Station Selector Dropdown ===
-function populateStationSelector() {
-    const stationSelect = document.getElementById('mobileStationSelect');
+    // === Populate Station Selector Dropdown ===
+    function populateStationSelector() {
+        const stationSelect = document.getElementById('mobileStationSelect');
     if (!stationSelect) return;
 
     // CLEAR EVERYTHING (fix duplicate issue)
